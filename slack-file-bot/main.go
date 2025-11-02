@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	os.Setenv("SLACK_BOT_TOKEN", "xoxb-9820101296102-9822954071430-5gI5PpRJESs3IKa2fKVjICfW")
+	os.Setenv("SLACK_BOT_TOKEN", "xoxb-9820101296102-9822954071430-Zxn6VIgJoueWxjP8y3Ci4h85")
 	os.Setenv("CHANNEL_ID", "C09PQLC8615")
 
 	api := slack.New(os.Getenv("SLACK_BOT_TOKEN"))
@@ -37,6 +37,7 @@ func main() {
 
 		_, err = api.UploadFileV2Context(context.Background(), slack.UploadFileV2Parameters{
 			Filename: f,
+			FileSize: int(fileInfo.Size()),
 			Channel:  channel,
 			Reader:   fileReader, // Use Reader instead of File
 		})
