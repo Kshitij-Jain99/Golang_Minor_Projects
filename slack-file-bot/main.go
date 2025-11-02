@@ -37,6 +37,7 @@ func main() {
 
 		_, err = api.UploadFileV2Context(context.Background(), slack.UploadFileV2Parameters{
 			Filename: f,
+			FileSize: int(fileInfo.Size()),
 			Channel:  channel,
 			Reader:   fileReader, // Use Reader instead of File
 		})
