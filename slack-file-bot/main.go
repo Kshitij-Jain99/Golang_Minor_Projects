@@ -18,9 +18,27 @@ func main() {
 	files := []string{"pplx-at-work.pdf"}
 
 	for _, f := range files {
-		_, err := api.UploadFileV2Context(context.Background(), slack.UploadFileV2Parameters{
-			File:    f,
-			Channel: channel,
+		// Check if file exists and can be accessed
+		fileInfo, err := os.Stat(f)
+		if err != nil {
+			fmt.Printf("Error accessing file %s: %v\n", f, err)
+			continue
+		}
+
+		fmt.Printf("File %s found, size: %d bytes\n", f, fileInfo.Size())
+
+		// Try using Reader instead of File path
+		fileReader, err := os.Open(f)
+		if err != nil {
+			fmt.Printf("Error opening file %s: %v\n", f, err)
+			continue
+		}
+		defer fileReader.Close()
+
+		_, err = api.UploadFileV2Context(context.Background(), slack.UploadFileV2Parameters{
+			Filename: f,
+			Channel:  channel,
+			Reader:   fileReader, // Use Reader instead of File
 		})
 		if err != nil {
 			fmt.Printf("Error uploading %s: %v\n", f, err)
