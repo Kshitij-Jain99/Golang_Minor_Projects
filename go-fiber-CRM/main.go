@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"go-fiber-CRM/database"
 	"go-fiber-CRM/lead"
@@ -8,8 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-
-	// 👇 add this line for pure Go SQLite
 	_ "modernc.org/sqlite"
 )
 
@@ -30,8 +29,15 @@ func initDatabase() {
 	// database.DBConn.AutoMigrate(&lead.Lead{})
 	// fmt.Println("Database Migrated")
 
-	var err error
-	database.DBConn, err = gorm.Open(sqlite.Open("leads.db"), &gorm.Config{})
+	db, err := sql.Open("sqlite", "leads.db")
+	if err != nil {
+		panic("failed to connect database")
+	}
+
+	database.DBConn, err = gorm.Open(sqlite.Dialector{
+		Conn: db,
+	}, &gorm.Config{})
+
 	if err != nil {
 		fmt.Printf("❌ Failed to connect database: %v\n", err)
 		panic(err)
